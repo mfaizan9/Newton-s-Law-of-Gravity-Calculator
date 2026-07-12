@@ -1,0 +1,364 @@
+/* ===========================================================================
+ * Newton's Law of Gravity Calculator -- sim-specific styles.
+ * Layered ON TOP of the KL-UNL foundation (kl-unl.css); the foundation files
+ * are never edited.  Uses foundation CSS custom properties for colour/contrast.
+ * =========================================================================== */
+
+/* Larger, zoomable body text (foundation default is 0.9rem; rule 10 floor 1.125rem).
+   Additive override in our own sheet -- the foundation file is untouched. */
+body {
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+.app-shell {
+  max-width: 75rem;
+}
+
+/* ---- Page layout: formula (left) + memory (right) on top, params below.
+   Reflows to a single stacked column below 56rem / in portrait. ------------- */
+.app-layout#app-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "formula memory"
+    "params  params";
+  gap: 1rem;
+  padding: 1rem;
+  align-items: stretch;   /* Memory panel matches the formula panel's height */
+}
+#formula-panel { grid-area: formula; }
+#memory-panel  { grid-area: memory; }
+#params-panel  { grid-area: params; }
+
+.panel {
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: 6px;
+  padding-bottom: 0.75rem;
+}
+.panel__heading {
+  font-size: 1.15rem;
+  border-bottom: 1px solid #e2e2e2;
+  margin-bottom: 0.5rem;
+}
+
+/* ============================ FORMULA PANEL ============================ */
+.formula-block {
+  padding: 0.5rem 1rem 0.25rem;
+}
+.eqn {
+  overflow: hidden;      /* no horizontal scrolling; the equation wraps/scales */
+  padding: 0.75rem 0.25rem;
+  text-align: center;
+}
+.eqn + .eqn { border-top: 1px dashed #e6e6e6; }
+.eqn mjx-container { margin: 0 auto; max-width: 100%; }
+/* Safety net: if a line is still wider than its box (very narrow screens),
+   scale the SVG down to fit rather than overflow. */
+.eqn mjx-container svg { max-width: 100%; height: auto; }
+
+/* ============================ MEMORY PANEL ============================ */
+#memory-panel { min-width: 12rem; }
+/* Memory buttons stacked in a single column.
+   box-sizing:border-box so the 100% width + horizontal padding stays INSIDE the
+   panel (the project's global box-sizing is content-box). */
+#memory-panel .button-row {
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  width: 100%;
+}
+#memory-panel .button-row .button {
+  box-sizing: border-box;
+  width: 100%;
+}
+.button {
+  border-radius: 4px;
+  border: var(--border-width) var(--border-style) var(--border-color);
+  color: var(--button-foreground-color);
+  background: var(--button-background-color);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.button:hover:not(:disabled) { filter: brightness(var(--button-hover-darken)); }
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.stored-table-wrap {
+  margin: 0.75rem 1rem 0;
+  overflow-x: auto;
+}
+.stored-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 1rem;
+}
+.stored-table th,
+.stored-table td {
+  border: 1px solid #d5d5d5;
+  padding: 0.4rem 0.7rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.stored-table thead th {
+  background: #f0f4f8;
+  font-weight: 700;
+}
+.stored-table th[scope="row"] { background: #f7f7f7; }
+.stored-table .current-col { background: #fbfbf2; }
+
+/* ============================ PARAMETER PANELS ============================ */
+#params-container { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.control-fieldset.param {
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  margin: 0 1rem;
+  padding: 0.5rem 0.9rem 0.75rem;
+}
+.control-fieldset__legend {
+  padding: 0 0.4rem;
+  font-size: 1.05rem;
+}
+
+/* wide screens: [ value over multipliers | slider ].
+   Fixed left column so every slider starts at the same x and is equally long. */
+.param__body {
+  display: grid;
+  grid-template-columns: 13rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+}
+/* left column: value on top, multiplier grid directly below it */
+.param__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+/* ---- value readout / editor ---- */
+.param__valuerow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+.param__sym { font-size: 1.1rem; }
+.param__value,
+.param__input {
+  box-sizing: border-box;
+  min-width: 9ch;
+  min-height: 2.5rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 1rem;
+  text-align: center;
+  color: var(--foreground-color);
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+.param__value { cursor: text; }
+.param__value:hover { background: #f4f8fc; }
+.param__unit { font-size: 1.05rem; }
+
+/* ---- multiplier buttons: 2x2 grid ---- */
+.param__mults {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 0.3rem;
+}
+.mult-btn {
+  min-width: 2.75rem;
+  min-height: 2.5rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 1rem;
+  color: var(--foreground-color);
+  background: #eef0f2;
+  border: 1px solid #c7ccd1;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.mult-btn:hover:not(:disabled) { background: #e2e6ea; }
+.mult-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---- custom accessible slider ---- */
+.pslider {
+  position: relative;
+  height: 8.5rem;
+  min-width: 22rem;   /* wider so the labelled-object icons don't collide */
+  overflow: visible;
+}
+.pslider__track {
+  position: absolute;
+  left: 1.75rem;
+  right: 1.75rem;
+  top: 2.3rem;
+  height: 0.5rem;
+  background: transparent;   /* the visible bar is .pslider__bar, drawn above the lines */
+  touch-action: none;
+  cursor: pointer;
+}
+/* The visible slider bar, painted IN FRONT of the connector lines */
+.pslider__bar {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  background: linear-gradient(#fbfbf7, #d0d0d0);
+  border: 1px solid #bcbcbc;
+  border-radius: 0.3rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Vertical connector lines from each labelled object up to the bar (AS specialLinesMC) */
+.pslider__lines { position: absolute; left: 0; right: 0; top: 0; height: 100%; }
+.pline {
+  position: absolute;
+  top: 0.25rem;                 /* start at the bar's centre line */
+  width: 1px;
+  transform: translateX(-50%);
+  background: #cfcfcf;
+  pointer-events: none;
+  z-index: 1;
+}
+.pline--row1 { height: 1rem; }  /* reach down to the row-1 icons */
+.pline--row2 { height: 3.2rem; }/* reach down to the row-2 icons */
+.pline--selected {
+  width: 2px;
+  background: var(--outline-color, #005fcc);
+  top: -1.6rem;                 /* selected line also rises toward the floating label */
+  z-index: 1;                   /* behind the bar (the bar tucks over the lines) */
+}
+.pline--selected.pline--row1 { height: 2.85rem; }
+.pline--selected.pline--row2 { height: 5.05rem; }
+.pslider__fill {
+  position: absolute;
+  left: 0; top: 0; height: 100%;
+  background: #aac4dd;
+  border-radius: 0.3rem 0 0 0.3rem;
+  pointer-events: none;
+  z-index: 3;                  /* the fill sits on the bar, above the lines */
+}
+.pslider__thumb {
+  position: absolute;
+  top: 50%;
+  width: 0.9rem;
+  height: 1.4rem;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(90deg, #e0e0e0, #fafafa, #e0e0e0);
+  border: 1px solid #9aa0a6;
+  border-radius: 0.25rem;
+  cursor: grab;
+  touch-action: none;
+  z-index: 6;
+}
+.pslider__thumb:active { cursor: grabbing; }
+
+/* Floating "selected object" label above the handle */
+.pslider__flabel {
+  position: absolute;
+  top: -1.7rem;          /* float above the bar, clear of the marker rows below */
+  transform: translateX(-50%);
+  padding: 0.1rem 0.45rem;
+  background: #fffce8;
+  border: 1px solid #d9d383;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 7;
+}
+
+/* Labelled-object quick-select markers */
+.pslider__markers { position: absolute; left: 0; right: 0; top: 0; height: 100%; }
+.marker {
+  position: absolute;
+  width: 2.1rem;
+  height: 2.2rem;
+  padding: 0;
+  transform: translateX(-50%);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  z-index: 4;               /* icons sit above the connector lines and the bar */
+}
+/* Marker rows are offset DOWN from the track (their offset parent). Keep both
+   rows inside the .pslider box: track sits 2.3rem down, box is 8.5rem tall. */
+.marker--row1 { top: 0.9rem; }
+.marker--row2 { top: 3.1rem; }
+.marker__icon {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 1.8rem; height: 1.8rem;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  transition: opacity 0.12s ease;
+}
+.marker__icon--color { opacity: 0; }
+.marker:hover,
+.marker:focus-visible,
+.marker.marker--selected { z-index: 8; border-color: #9ec3e6; background: #ffffff; }
+.marker:hover .marker__icon--color,
+.marker:focus-visible .marker__icon--color,
+.marker--selected .marker__icon--color { opacity: 1; }
+.marker:hover .marker__icon--grey,
+.marker:focus-visible .marker__icon--grey,
+.marker--selected .marker__icon--grey { opacity: 0; }
+.marker--selected { outline: 2px solid var(--outline-color); outline-offset: 0; }
+
+/* MathJax inline spans shouldn't add extra line box height */
+.mjx mjx-container { margin: 0 !important; }
+.mjx mjx-container[display="true"] { margin: 0.4rem 0 !important; }
+
+/* =============================== RESPONSIVE =============================== */
+/* Tablet / narrow: single column, params stack. Keeps foundation 56rem intent. */
+@media (max-width: 56rem) {
+  .app-layout#app-main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "formula"
+      "params"
+      "memory";
+  }
+  #memory-panel { min-width: 0; }
+}
+
+/* Medium widths: the equal-length sliders get narrower, so give them more room
+   (slimmer left column) and trim the icon size to keep log-close labelled
+   objects from colliding. */
+@media (max-width: 62rem) {
+  .param__body { grid-template-columns: 11rem minmax(0, 1fr); gap: 0.5rem 1rem; }
+  .param__value, .param__input { min-width: 7.5ch; }
+  .marker { width: 1.6rem; }
+  .marker__icon { width: 1.25rem; height: 1.25rem; }
+  .pslider__track { left: 1.4rem; right: 1.4rem; }
+}
+
+/* Phone portrait: stack each parameter block's value / multipliers / slider. */
+@media (max-width: 34rem) {
+  .app-layout#app-main { padding: 0.6rem; gap: 0.75rem; }
+  .param__body {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .param__valuerow { justify-content: flex-start; }
+  .param__mults { grid-template-columns: repeat(4, auto); justify-content: start; }
+  .pslider { min-width: 0; }
+  .pslider__track { left: 1.2rem; right: 1.2rem; }
+  /* Phone tracks are only ~300px wide for 13 log-spaced objects, so the closest
+     pairs can't be fully separated; keep the icons small to minimise overlap.
+     The slider, value field and multiplier buttons remain the primary controls. */
+  .marker { width: 1.3rem; height: 1.9rem; }
+  .marker__icon { width: 1.05rem; height: 1.05rem; }
+  .marker--row1 { top: 0.7rem; }
+  .marker--row2 { top: 2.6rem; }
+  .pline--row2 { height: 2.8rem; }
+}
+
+/* Respect reduced-motion (no essential motion in this sim; disable transitions). */
+@media (prefers-reduced-motion: reduce) {
+  .marker__icon { transition: none; }
+}

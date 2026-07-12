@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Newton's Law of Gravity Calculator</title>
+
+  <!-- Foundation (copied unchanged) -->
+  <link rel="stylesheet" href="foundation/kl-unl.css" type="text/css" media="all">
+  <link rel="stylesheet" href="styles/styles.css" type="text/css" media="all">
+
+  <!-- MathJax (vendored locally, SVG output; context menu enabled for "Show Math As") -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' },
+      options: { menuOptions: { settings: { assistiveMml: true } } },
+      startup: {
+        typeset: false,
+        ready: function () {
+          MathJax.startup.defaultReady();
+          if (window.klunlOnMathJaxReady) window.klunlOnMathJaxReady();
+        }
+      }
+    };
+  </script>
+  <script src="vendor/mathjax/tex-svg.js" id="MathJax-script"></script>
+
+  <!-- Foundation equation helper + masthead component -->
+  <script src="foundation/kl-unl.js"></script>
+  <script src="foundation/kl-unl-masthead.js" defer></script>
+</head>
+
+<body>
+  <div class="app-shell">
+    <!-- Masthead renders the H1 title + Reset / About buttons (no Help: help content is "") -->
+    <kl-unl-masthead sim-id="newtongravity" json-url="foundation/contents.json"></kl-unl-masthead>
+
+    <!-- Global screen-reader status region: announces state changes (with units) on commit -->
+    <div id="sr-status" class="sr-only" aria-live="polite" role="status"></div>
+
+    <main class="app-layout" id="app-main">
+
+      <!-- ============================ FORMULA PANEL ============================ -->
+      <section class="panel" aria-labelledby="formula-heading" id="formula-panel">
+        <h2 class="panel__heading" id="formula-heading">Gravitational force and accelerations</h2>
+
+        <div class="formula-block">
+          <div class="eqn" id="eqn-force" aria-hidden="true"></div>
+          <p class="sr-only" id="sr-eqn-force"></p>
+
+          <div class="eqn" id="eqn-accel" aria-hidden="true"></div>
+          <p class="sr-only" id="sr-eqn-accel"></p>
+        </div>
+      </section>
+
+      <!-- ============================ MEMORY PANEL ============================ -->
+      <section class="panel" aria-labelledby="memory-heading" id="memory-panel">
+        <h2 class="panel__heading" id="memory-heading">Memory</h2>
+
+        <div class="button-row" role="group" aria-label="Memory controls">
+          <button type="button" class="button" id="btn-store">store</button>
+          <button type="button" class="button" id="btn-show" aria-expanded="false"
+                  aria-controls="stored-table-wrap">show</button>
+          <button type="button" class="button" id="btn-clear">clear</button>
+        </div>
+
+        <div id="stored-table-wrap" class="stored-table-wrap" hidden>
+          <table class="stored-table" id="stored-table">
+            <caption class="sr-only">Stored calculation values. The first column is the current values;
+              each additional column is a stored set.</caption>
+            <thead>
+              <tr id="stored-head-row">
+                <th scope="col"><span class="sr-only">Quantity</span></th>
+                <th scope="col">current values</th>
+              </tr>
+            </thead>
+            <tbody id="stored-body">
+              <!-- rows built by simulation.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== PARAMETER PANELS (M1, M2, R) ==================== -->
+      <section class="panel" aria-labelledby="params-heading" id="params-panel">
+        <h2 class="panel__heading" id="params-heading">Masses and separation</h2>
+        <p class="panel__help">Set each value with its slider, by typing a value, by choosing a labelled
+          object on the slider, or by multiplying the current value with the &times;&#8531;, &times;&#189;,
+          &times;2 and &times;3 buttons.</p>
+
+        <div id="params-container">
+          <!-- three .control-fieldset blocks built by simulation.js -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="simulation.js"></script>
+</body>
+</html>
